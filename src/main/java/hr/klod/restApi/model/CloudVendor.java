@@ -1,7 +1,13 @@
 package hr.klod.restApi.model;
 
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
 public class CloudVendor {
+    @Id
     private Integer id;
     private String name;
     private String address;

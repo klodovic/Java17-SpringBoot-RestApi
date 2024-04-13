@@ -1,18 +1,17 @@
 package hr.klod.restApi.controller;
 
 import hr.klod.restApi.model.CloudVendor;
-import jakarta.annotation.PostConstruct;
+import hr.klod.restApi.service.CloudVendorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
 @RequestMapping("/vendor")
 public class VendorController {
 
-    List<CloudVendor> vendorList = new ArrayList<CloudVendor>();
+    /*List<CloudVendor> vendorList = new ArrayList<CloudVendor>();
     @PostConstruct
     private void init(){
 
@@ -22,40 +21,49 @@ public class VendorController {
         vendorList.add(c1);
         vendorList.add(c2);
         vendorList.add(c3);
-    }
+    }*/
 
+
+    CloudVendorService cloudVendorService;
+
+    public VendorController(CloudVendorService cloudVendorService) {
+        this.cloudVendorService = cloudVendorService;
+    }
 
     //Get all vendors
     @GetMapping("")
     public List<CloudVendor> getALlVendors(){
-        return vendorList;
+        return cloudVendorService.getAll();
     }
 
     //Get vendor by id
     @GetMapping("/{id}")
-    public Optional<CloudVendor> getVendor(@PathVariable Integer id){
-        return vendorList.stream().filter(v -> v.getId().equals(id)).findFirst();
+    public CloudVendor getVendor(@PathVariable("id") Integer id) {
+        return cloudVendorService.getVendor(id);
     }
 
     //Create new vendor
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public void create(@RequestBody CloudVendor cloudVendor){
-        vendorList.add(cloudVendor);
+        cloudVendorService.create(cloudVendor);
     }
 
     //Update vendor
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void update(@RequestBody CloudVendor cloudVendor, @PathVariable Integer id){
-        vendorList.removeIf(v -> v.getId().equals(id));
-        vendorList.add(cloudVendor);
+    public void update(@RequestBody CloudVendor cloudVendor, @PathVariable("id") Integer id) {
+        if (cloudVendorService.getVendor(id) != null){
+            cloudVendorService.update(cloudVendor);
+        }
     }
 
     //Delete vendor
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id){
-        vendorList.removeIf(v -> v.getId().equals(id));
+    public void delete(@PathVariable Integer id) {
+        if (cloudVendorService.getVendor(id) != null){
+            cloudVendorService.delete(id);
+        }
     }
 }
